@@ -52,7 +52,7 @@ RUN git config --global url."https://".insteadOf git://
 # Install python, nodejs and npm
 RUN yum install -y epel-release
 RUN yum -y install nodejs npm --enablerepo=epel
-RUN npm install -g npm@2.1.11
+RUN npm install -g npm@6.14.18
 RUN npm install -g brunch@1.7.20
 
 # Once run some mvn commands to cache .m2/repository
