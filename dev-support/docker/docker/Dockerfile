@@ -10,7 +10,7 @@
 #   See the License for the specific language governing permissions and
 #   limitations under the License.
 
-FROM centos:centos6
+FROM centos:centos7
 
 RUN echo root:changeme | chpasswd
 
@@ -25,18 +25,17 @@ RUN yum -y install glibc-common
 ENV HOME /root
 
 #Install JAVA
-RUN wget --no-check-certificate --no-cookies --header "Cookie:oraclelicense=accept-securebackup-cookie" http://download.oracle.com/otn-pub/java/jdk/8u60-b27/jdk-8u60-linux-x64.rpm -O jdk-8u60-linux-x64.rpm
-RUN rpm -ivh jdk-8u60-linux-x64.rpm
-ENV JAVA_HOME /usr/java/default/
+RUN yum -y install java-1.8.0-openjdk-devel
+ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 
 #Install Maven
 RUN mkdir -p /opt/maven
 WORKDIR /opt/maven
-RUN wget http://apache.cs.utah.edu/maven/maven-3/3.0.5/binaries/apache-maven-3.0.5-bin.tar.gz
-RUN tar -xvzf /opt/maven/apache-maven-3.0.5-bin.tar.gz
-RUN rm -rf /opt/maven/apache-maven-3.0.5-bin.tar.gz
+RUN wget http://apache.cs.utah.edu/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz
+RUN tar -xvzf /opt/maven/apache-maven-3.9.1-bin.tar.gz
+RUN rm -rf /opt/maven/apache-maven-3.9.1-bin.tar.gz
 
-ENV M2_HOME /opt/maven/apache-maven-3.0.5
+ENV M2_HOME /opt/maven/apache-maven-3.9.1
 ENV MAVEN_OPTS -Xmx2048m -XX:MaxPermSize=256m
 ENV PATH $PATH:$JAVA_HOME/bin:$M2_HOME/bin
 
@@ -51,7 +50,7 @@ RUN sed -ri 's/UsePAM yes/UsePAM no/g' /etc/ssh/sshd_config
 RUN git config --global url."https://".insteadOf git://
 
 # Install python, nodejs and npm
-RUN yum -y install http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+RUN yum install -y epel-release
 RUN yum -y install nodejs npm --enablerepo=epel
 RUN npm install -g npm@2.1.11
 RUN npm install -g brunch@1.7.20
