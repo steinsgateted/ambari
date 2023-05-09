@@ -31,11 +31,12 @@ ENV JAVA_HOME /usr/lib/jvm/java-1.8.0-openjdk
 #Install Maven
 RUN mkdir -p /opt/maven
 WORKDIR /opt/maven
-RUN wget http://apache.cs.utah.edu/maven/maven-3/3.9.1/binaries/apache-maven-3.9.1-bin.tar.gz
-RUN tar -xvzf /opt/maven/apache-maven-3.9.1-bin.tar.gz
-RUN rm -rf /opt/maven/apache-maven-3.9.1-bin.tar.gz
+ENV MAVEN_VERSION 3.9.1
+RUN wget http://apache.cs.utah.edu/maven/maven-3/$MAVEN_VERSION/binaries/apache-maven-$MAVEN_VERSION-bin.tar.gz
+RUN tar -xvzf /opt/maven/apache-maven-$MAVEN_VERSION-bin.tar.gz
+RUN rm -rf /opt/maven/apache-maven-$MAVEN_VERSION-bin.tar.gz
 
-ENV M2_HOME /opt/maven/apache-maven-3.9.1
+ENV M2_HOME /opt/maven/apache-maven-$MAVEN_VERSION
 ENV MAVEN_OPTS -Xmx2048m -XX:MaxPermSize=256m
 ENV PATH $PATH:$JAVA_HOME/bin:$M2_HOME/bin
 
@@ -52,12 +53,13 @@ RUN git config --global url."https://".insteadOf git://
 # Install python, nodejs and npm
 RUN yum install -y epel-release
 RUN yum -y install nodejs npm --enablerepo=epel
-RUN npm install -g npm@6.14.18
+RUN npm install -g npm@8.19.4
 RUN npm install -g brunch@1.7.20
+RUN npm install -g bower
 
 # Once run some mvn commands to cache .m2/repository
 WORKDIR /tmp
-RUN git clone https://github.com/apache/ambari.git
+RUN git clone -b branch-2.8 https://github.com/apache/ambari.git
 WORKDIR /tmp/ambari
 
 RUN mvn -B -X clean install package rpm:rpm -DskipTests -Dpython.ver="python >= 2.6" -Preplaceurl
